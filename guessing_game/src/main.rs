@@ -8,7 +8,7 @@ fn main() {
     let secret_number = rand::thread_rng().gen_range(1..101); // 左闭右开？
     // println!("该数字是：{}", secret_number);
     let mut guess = String::new(); // 创建一个String对象
-    while true {
+    loop {
         io::stdin().read_line(&mut guess).expect("输入错误"); // 异常处理？
         let source_num = guess.trim().parse::<i32>().expect("guess 存在非数字字符");
         if source_num == secret_number {
