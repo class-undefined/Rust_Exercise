@@ -8,7 +8,7 @@ fn test1() {
     let b = a();
     println!("{}", b);
 }
-/* 地址被其他变量获取，所有权丧失 */
+/* Error:地址被其他变量获取，所有权丧失 */
 fn test2() {
     let _v:Vec<i32> = Vec::new();
     _v.push(1);
