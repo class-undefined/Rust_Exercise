@@ -76,7 +76,6 @@ let nums:Vec<i32> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].to_vec();
 let ans1 = sum(&nums); // 通过引用传递nums，保证nums不会丢失所有权，下同
 let ans2 = mult(&nums);
 println!("sum:{} mult:{}", ans1, ans2);
-}
 ```
 
 
