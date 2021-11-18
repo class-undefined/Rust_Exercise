@@ -23,7 +23,10 @@ fn get_words(_s: &String) -> Vec<String> {
         }
         ans
 }
+
 fn main() {
+
+    test();
     /* 分割单词 */
     let s = String::from("hello world");
     let result: Vec<String> = get_words(&s);
