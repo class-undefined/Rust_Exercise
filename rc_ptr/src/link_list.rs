@@ -1,4 +1,5 @@
-use std::rc::Rc;
+#[warn(unused_mut)]
+use std::{borrow::{Borrow, BorrowMut}, rc::Rc};
 /* 节点属性 */
 pub type Node<T> = Option<Rc<LinkNode<T>>>;
 #[derive(Debug)]
@@ -18,6 +19,15 @@ impl <T: Clone>LinkNode<T> {
             next: None
         }
     }
+    fn set_next(&mut self, other: Node<T>) -> () {
+        self.next = other
+    }
+    fn get_last<'a> (&'a mut self) -> &'a mut Self{
+        if let Some(ref mut node) = self.next {
+            return node.get_last();
+        }
+        self
+    }
 }
 
 pub trait LinkInterface<T: Clone> {
@@ -33,20 +43,14 @@ impl <T: Clone + LinkInterface<T>> Link<T> {
         }
     }
 
-    fn push(&self, node: Node<T>) ->() {
-        let mut _node = &self.head;
+    fn push(&mut self, node: Node<T>) ->() {
         /* 如果next不为None，则_node = _node.next */
-        loop {
-            if let Some(n) = _node {
-                _node = &Some(*n); // 不能这么做，块末尾会将n清除...
-                continue;
+        if let Some(_head) = &mut self.head {
+            if let Some(_node) = node {
+                let reference = _head.borrow_mut().get_last();
+                (*reference).get_last().set_next(Some(_node));
             }
-            break;
         }
-        _node.is_none();
-        if let Some(n) = &mut _node {
-            n.next = node;
-        };
         ()
     }
 }
