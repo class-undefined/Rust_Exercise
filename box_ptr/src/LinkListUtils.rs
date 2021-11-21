@@ -80,6 +80,26 @@ impl <T: Clone + Display + Debug>LinkList<T> {
         }
     }
 
+    pub fn remove(&mut self, index: u32) -> bool {
+        match self.head.as_mut() {
+            None => false,
+            Some(mut curr) => {
+                /* get pre_node */
+                for _i in 0..index - 1 {
+                    curr = curr.next.as_mut().unwrap();
+                }
+                match curr.next.take() {
+                    None => false,
+                    Some(node) => {
+                        curr.next = node.next;
+                        self.len -= 1;
+                        true
+                    }
+                }
+            }
+        }
+    }
+
     pub fn push_from_vec(&mut self, vec: Vec<T>) -> () {
         for e in vec {
             self.push_back(e);
