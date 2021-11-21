@@ -81,6 +81,9 @@ impl <T: Clone + Display + Debug>LinkList<T> {
     }
 
     pub fn remove(&mut self, index: u32) -> bool {
+        if index >= self.size() {
+            return false;
+        }
         match self.head.as_mut() {
             None => false,
             Some(mut curr) => {
