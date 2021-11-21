@@ -54,10 +54,10 @@ impl <T: Clone + Display + Debug>LinkList<T> {
             self.len += 1;
             return;
         }
-        let mut cursor = self.head.as_mut().expect("self.head.as_mut() error");
+        let mut cursor = self.head.as_mut().unwrap();
         /* 如果next不为none */
         while cursor.next.is_some() {
-            let node_next = cursor.next.as_mut().expect("cursor.next.as_mut() error");
+            let node_next = cursor.next.as_mut().unwrap();
             cursor = node_next;
         }
         cursor.next = Some(Box::new(node));
@@ -111,12 +111,12 @@ impl <T: Clone + Display + Debug>LinkList<T> {
 
     pub fn show(&mut self) -> () {
         println!("{}", self.size());
-        let mut cursor = self.head.as_mut().expect("msg");
+        let mut cursor = self.head.as_mut().unwrap();
         for _i in 0..self.len  {
             print!(" {} ", cursor.val);
             if cursor.next.is_some() {
                 print!("->");
-                cursor = cursor.next.as_mut().expect("无法到达next");
+                cursor = cursor.next.as_mut().unwrap();
             }
         }
     }
