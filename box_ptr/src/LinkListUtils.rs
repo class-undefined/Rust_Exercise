@@ -103,6 +103,23 @@ impl <T: Clone + Display + Debug>LinkList<T> {
         }
     }
 
+    pub fn insert(&mut self, index: u32, val: T) -> bool {
+        if index > self.size() - 1 {
+            return false;
+        }
+        match self.head.as_mut() {
+            None => {
+                self.head = Some(Box::new(LinkNode::new(val)));
+                self.len += 1;
+                return true;
+            },
+            Some(curr) => {
+                
+            }
+        }
+        true
+    }
+
     pub fn push_from_vec(&mut self, vec: Vec<T>) -> () {
         for e in vec {
             self.push_back(e);
