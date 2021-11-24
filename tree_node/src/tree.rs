@@ -1,11 +1,12 @@
+use std::fmt::Debug;
 
 /* 子节点 */
-pub struct TreeNode<T: Clone> {
+pub struct TreeNode<T: Clone  + Debug> {
     pub val: T,
     pub left: Option<Box<TreeNode<T>>>,
     pub right: Option<Box<TreeNode<T>>>
 }
-impl <T: Clone>TreeNode<T> {
+impl <T>TreeNode<T> where T: Clone + Debug {
     pub fn new(val: T) -> Self {
         TreeNode {
             val,
@@ -27,25 +28,6 @@ impl <T: Clone>TreeNode<T> {
             right: Some(Box::new(TreeNode::new(right))),
         }
     }
-
-    // pub fn clone(&self) -> TreeNode<T> {
-    //     let left: Option<Box<TreeNode<T>>> = {
-    //         if self.left.is_none() {
-    //             None
-    //         }else {
-    //             Some(self.left.unwrap())
-    //         }
-    //     };
-    //     let right: Option<Box<TreeNode<T>>> = {
-    //         if self.right.is_none() {
-    //             None
-    //         }else {
-    //             Some(self.right.unwrap())
-    //         }
-    //     };
-    //     let val = self.val;
-    //     Self {val, left, right}
-    // }
 
     /* 将自身转化为Box指针 */
     pub fn to_box(self) -> Box<TreeNode<T>> {
@@ -73,8 +55,10 @@ impl <T: Clone>TreeNode<T> {
         &self.right
     }
 }
-pub struct Tree<T: Clone> {
-    pub root: Box<TreeNode<T>>,
+
+
+pub struct Tree<T: Clone + Debug> {
+    pub root: Option<Box<TreeNode<T>>>,
     pub len: u32, // 节点个数
     pub depth: u32 // 最大深度
 }
@@ -84,22 +68,24 @@ pub fn is_none<T>(option: &Option<T>) -> bool {
         _ => false
     }
 }
-fn build<T: Clone>(nodes: &Vec<Option<T>>, index: usize) -> Option<Box<TreeNode<T>>> {
-    if index > nodes.len() {
+fn _build<T: Clone + Debug>(nodes: &Vec<Option<T>>, index: usize) -> Option<Box<TreeNode<T>>> {
+    if index > nodes.len() - 1 {
         return None
     }
-    let node_option = &nodes[index as usize];
+    let node_option = &nodes[index];
     match node_option {
         None => return None,
         Some(val) => {
             let mut node = TreeNode::new(val.clone());
             let left_index = 2 * index + 1;
             let right_index = 2 * index + 2;
+            println!("left_index: {}, right_index: {}", left_index, right_index);
             /* 设置左节点 */
             if left_index > nodes.len() - 1 {
-                return None;
+                node.set_left(None);
             } else {
-                let left_node_option = build(nodes, left_index);
+                let left_node_option = _build(nodes, left_index);
+                // println!("left {}", left_node_option.is_none());
                 if left_node_option.is_none() {
                     node.set_left(None);
                 }else {
@@ -109,9 +95,10 @@ fn build<T: Clone>(nodes: &Vec<Option<T>>, index: usize) -> Option<Box<TreeNode<
             }
             /* 设置右节点 */
             if right_index > nodes.len() - 1 {
-                return None
+                node.set_right(None);
             } else {
-                let right_node_option = build(nodes, right_index);
+                let right_node_option = _build(nodes, right_index);
+                // println!("right {}", right_node_option.is_none());
                 if right_node_option.is_none() {
                     node.set_right(None);
                 } else {
@@ -123,11 +110,28 @@ fn build<T: Clone>(nodes: &Vec<Option<T>>, index: usize) -> Option<Box<TreeNode<
         }
     }
 }
-impl <T: Clone> Tree<T> {
+impl <T: Clone + Debug> Tree<T> {
     pub fn from(nodes: &Vec<Option<T>>) -> Tree<T> {
-        let root = build(nodes, 0).unwrap();
+        let root = _build(nodes, 0).unwrap();
+        let root = Some(root);
         Tree {
             root, depth: 0, len: 0
         }
+    }
+
+    /* 前序遍历 */
+    pub fn preorder_traversal(&self) -> () {
+        fn pre<T: Clone + Debug>(node: &Option<Box<TreeNode<T>>>) -> () {
+            if node.is_none() {return;}
+            let _node = node.as_ref().unwrap();
+            print!("{:?} ", _node.val);
+            if _node.left.is_some() {
+                pre(&_node.left);
+            }
+            if _node.right.is_some() {
+                pre(&_node.right);
+            }
+        }
+        pre(&self.root);
     }
 }
