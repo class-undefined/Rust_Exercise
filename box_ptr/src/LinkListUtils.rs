@@ -107,17 +107,32 @@ impl <T: Clone + Display + Debug>LinkList<T> {
         if index > self.size() - 1 {
             return false;
         }
+        if index == 0 { // 插入头节点
+            let node = self.head.take();
+            self.head = Some(Box::new(LinkNode::new(val)));
+            self.head.as_mut().unwrap().next = node;
+            self.len += 1;
+            return true;
+        }
         match self.head.as_mut() {
             None => {
                 self.head = Some(Box::new(LinkNode::new(val)));
                 self.len += 1;
                 return true;
             },
-            Some(curr) => {
-                
+            Some(mut curr) => {
+                for _i in 0..index - 1{
+                    curr = curr.next.as_mut().unwrap();
+                }
+                // 拿到后缀节点
+                let post = curr.next.take();
+                curr.next = Some(Box::new(LinkNode::new(val)));
+                // curr.next.as_mut(): 获取curr.next的修改权 unwrap: 获取Option中的非None数据
+                curr.next.as_mut().unwrap().next = post;
+                self.len += 1;
+                return true;
             }
         }
-        true
     }
 
     pub fn push_from_vec(&mut self, vec: Vec<T>) -> () {

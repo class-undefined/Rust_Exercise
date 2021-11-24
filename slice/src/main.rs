@@ -26,9 +26,13 @@ fn get_words(_s: &String) -> Vec<String> {
 
 fn main() {
 
-    test();
+    // test();
     /* 分割单词 */
     let s = String::from("hello world");
+    
+    let mut v: Vec<u8> = Vec::new();
+    v.extend_from_slice('a'.encode_utf8(&mut [0; 4]).as_bytes());
+    println!("{} ", v[0]);
     let result: Vec<String> = get_words(&s);
     for str in result.iter() {
         println!("{}", str);
