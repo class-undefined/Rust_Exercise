@@ -72,20 +72,23 @@ fn _build<T: Clone + Debug>(nodes: &Vec<Option<T>>, index: usize) -> Option<Box<
     if index > nodes.len() - 1 {
         return None
     }
+    let left_index = 2 * index + 1;
+    let right_index = 2 * index + 2;
+    println!("left_index: {}, right_index: {}", left_index, right_index);
     let node_option = &nodes[index];
     match node_option {
         None => return None,
         Some(val) => {
             let mut node = TreeNode::new(val.clone());
-            let left_index = 2 * index + 1;
-            let right_index = 2 * index + 2;
-            println!("left_index: {}, right_index: {}", left_index, right_index);
+            // let left_index = 2 * index + 1;
+            // let right_index = 2 * index + 2;
+            // println!("left_index: {}, right_index: {}", left_index, right_index);
             /* 设置左节点 */
             if left_index > nodes.len() - 1 {
                 node.set_left(None);
             } else {
                 let left_node_option = _build(nodes, left_index);
-                // println!("left {}", left_node_option.is_none());
+                println!("left {}", left_node_option.is_none());
                 if left_node_option.is_none() {
                     node.set_left(None);
                 }else {
@@ -98,7 +101,7 @@ fn _build<T: Clone + Debug>(nodes: &Vec<Option<T>>, index: usize) -> Option<Box<
                 node.set_right(None);
             } else {
                 let right_node_option = _build(nodes, right_index);
-                // println!("right {}", right_node_option.is_none());
+                println!("right {}", right_node_option.is_none());
                 if right_node_option.is_none() {
                     node.set_right(None);
                 } else {
