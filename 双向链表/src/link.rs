@@ -133,6 +133,9 @@ impl <T>LinkMethod<T> for Link<T> where T: Debug + Clone {
         if self.size <= 0 {
             panic!("Link 中 元素已为0")
         }
+        if begin >= self.size {
+            panic!("begin: {} 已越界", begin);
+        }
         if begin == 0 {
             if self.head.is_none() {
                 panic!("Link 中 head 为None")
@@ -151,28 +154,42 @@ impl <T>LinkMethod<T> for Link<T> where T: Debug + Clone {
                 curr_node = next_node;
             }
             let curr_mut = Rc::clone(&curr_node);
-            let curr_node_borrow = curr_node.borrow();
-            let post_node_ref = curr_node_borrow.next.as_ref().unwrap();
-            let post_node = Rc::clone(post_node_ref);
-            curr_mut.borrow_mut().set_next(Some(Rc::clone(post_node_ref)));
-            post_node.borrow_mut().set_pre(Some(Rc::clone(&curr_mut)));
+            let mut curr_node_borrow_mut = curr_mut.borrow_mut();
+            let post_node_option = curr_node_borrow_mut.next.take();
+            let post_node = {
+                if post_node_option.is_none() {
+                    None
+                } else {
+                    let node = post_node_option.as_ref().unwrap().borrow();
+                    if node.next.is_none() {
+                        None
+                    }else {
+                        let next_rc = node.next.as_ref().unwrap();
+                        let mut next_node_mut = next_rc.borrow_mut();
+                        next_node_mut.set_pre(Some(Rc::clone(&curr_mut))); // 后缀节点的pre指向前序节点
+                        Some(Rc::clone(next_rc))
+                    }
+                }
+            };
+            curr_node_borrow_mut.set_next(post_node);
             self.size -= 1;
         }
     }
 
     fn show(&self) -> () {
-        let mut curr_node = Rc::clone(self.head.as_ref().unwrap());
-        let mut has_next = curr_node.as_ref().borrow().next.is_some();
-        while has_next {
-            let o = curr_node.clone();
+        let mut curr_node = Some(Rc::clone(self.head.as_ref().unwrap()));
+        while curr_node.is_some() {
+            let o = curr_node.unwrap().clone();
             let node = o.borrow();
             print!("{{ pre: {:?} curr: {:?} next: {:?} }}",node.get_pre_val(), node.val, node.get_next_val());
-            let next = node.next.as_ref().unwrap().clone();
-            curr_node = next;
-            has_next = curr_node.as_ref().borrow().next.is_some();
-            if has_next {
-                print!(" -> ");
+            let has_next = node.next.is_some();
+            if !has_next {
+                break;
             }
+            let next = node.next.as_ref().unwrap().clone();
+            curr_node = Some(next);
+            print!(" -> ");
+            
         }
     }
 }
