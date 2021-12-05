@@ -1,4 +1,4 @@
-pub type Node<T: Copy> = Option<Box<TreeNode<T>>>;
+pub type Node<T> = Option<Box<TreeNode<T>>>;
 
 #[derive(Debug)]
 pub struct TreeNode<T: Copy> {
@@ -55,9 +55,7 @@ impl <T: Copy>TreeMethod<T> for Tree<T> {
                 node.right = _build(_nodes, _index);
                 Some(Box::new(node))
             }
-            
-
-        };
+        }
         self.root = _build(nodes, &mut 0);
     }
 }
