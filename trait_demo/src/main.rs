@@ -12,6 +12,14 @@ impl Summary for NewArticle {
         format!("{}, by {} ({})", self.headline, self.author, self.location)
     }
 }
+#[derive(Debug)]
+struct A {
+    val: i32
+}
 fn main() {
-    println!("Hello, world!");
+    let a = A {val: 1};
+    let ref b = a;
+
+    println!("Hello, world!{:?}", *b);
+    println!("Hello, world!{:?}", *b);
 }
