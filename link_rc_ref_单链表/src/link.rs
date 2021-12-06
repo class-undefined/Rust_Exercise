@@ -95,13 +95,10 @@ impl <T: Display>Link<T> {
             // println!("i = {}", _i);
             let node = Rc::clone(&curr);
             let _node = Rc::clone(&curr);
-            print!("{} ", node.borrow_mut().val);
-            if node.borrow_mut().next.is_some() {
+            print!("{} ", node.as_ref().borrow().val);
+            if node.as_ref().borrow().next.is_some() {
                 curr = Rc::clone(&_node.borrow_mut().next.as_ref().unwrap());
             }
         }
     }
-
-
-    
 }
